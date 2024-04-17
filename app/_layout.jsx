@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import { Slot, Stack, SplashScreen } from 'expo-router'
 import { useFonts } from 'expo-font'
+import { GlobalProvider } from '../context/GlobalProvider';
 
 SplashScreen.preventAutoHideAsync();
 const RootLayout = () => {
@@ -36,11 +37,13 @@ const RootLayout = () => {
         // </>
         //slot basically renders the children of the component
 
-        <Stack>
-            <Stack.Screen name='index' options={{ headerShown: false }} />
-            <Stack.Screen name='(auth)' options={{ headerShown: false }} />
-            <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-        </Stack>
+        <GlobalProvider>
+            <Stack>
+                <Stack.Screen name='index' options={{ headerShown: false }} />
+                <Stack.Screen name='(auth)' options={{ headerShown: false }} />
+                <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+            </Stack>
+        </GlobalProvider>
 
         // stack is a container that holds multiple screens similar to react fragments
     )

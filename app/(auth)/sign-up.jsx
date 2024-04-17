@@ -1,4 +1,4 @@
-import { ScrollView, Text, View, Image } from 'react-native'
+import { ScrollView, Text, View, Image, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -6,15 +6,45 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
+import { createUser } from '../../lib/appwrite'
+import { useGlobalContext } from '../../context/GlobalProvider'
 const SignUp = () => {
+    const { setUser, setIsLoaggedIn } = useGlobalContext();
     const [form, setForm] = useState({
         username: '',
         email: '',
         password: ''
 
     });
-    const submit = () => { }
+    const isValidEmail = (email) => {
+        // Regular expression for a simple email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+    const submit = async () => {
+        if (!form.username || !form.email || !form.password) {
+            Alert.alert('All fields are required');
+        }
+        if (!isValidEmail(form.email.trim())) {
+            console.log("Invalid email address");
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+            console.log(form.email)
+            const result = await createUser(form.password.trim(), form.username.trim(), form.email.trim());
+            // set it to global state using context....
+            setUser(result);
+            setIsLoaggedIn(true);
+            router.replace('/home')
+        } catch (error) {
+            Alert.alert('Error', error.message)
+        }
+        finally {
+            setIsSubmitting(false);
+        }
+    }
     const [isSubmitting, setIsSubmitting] = useState(false);
     return (
         <SafeAreaView className="bg-primary h-full">
@@ -45,7 +75,7 @@ const SignUp = () => {
                     <CustomButton title="Sign Up" containerStyle="mt-7" handlePress={submit} isLoading={isSubmitting} />
 
                     <View className="justify-center pt-5 flex-row gap-2">
-                        <Text className="text-lg text-gray-100 font-pregular">Don't have an account? <Link href="/sign-in" className="text-secondary">Sign In</Link></Text>
+                        <Text className="text-lg text-gray-100 font-pregular">Have an account already? <Link href="/sign-in" className="text-secondary">Sign In</Link></Text>
                     </View>
                 </View>
             </ScrollView>

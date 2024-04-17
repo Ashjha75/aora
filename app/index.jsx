@@ -4,8 +4,11 @@ import { Redirect, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from "../constants"
 import CustomButton from '../components/CustomButton';
+import { useGlobalContext } from '../context/GlobalProvider';
 
 export default function App() {
+    const { isLoading, isLoaggedIn } = useGlobalContext();
+    if (!isLoading && isLoaggedIn) return <Redirect href="/home" />
     return (
         // <View className="flex-1 items-center justify-center bg-[#1f4662]">
         //     <Text className="text-3xl text-yellow-500 font-pblack">Aora!</Text>

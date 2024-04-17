@@ -4,9 +4,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
+import { signIn } from '../../lib/appwrite'
+import { useGlobalContext } from '../../context/GlobalProvider'
 
 const SignIn = () => {
+    const { setUser, setIsLoaggedIn } = useGlobalContext();
     const [form, setForm] = useState({
         email: '',
         password: ''
@@ -25,12 +28,32 @@ const SignIn = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const submit = () => {
-        if (validateForm()) {
-            // Continue with form submission
-            Alert.alert('Form submitted');
-        }
+    const isValidEmail = (email) => {
+        // Regular expression for a simple email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
     };
+    const submit = async () => {
+        validateForm();
+        if (!isValidEmail(form.email.trim())) {
+            console.log("Invalid email address");
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+            console.log(form.email)
+            const result = await signIn(form.email.trim(), form.password.trim());
+            // set it to global state using context....
+            setUser(result);
+            setIsLoaggedIn(true);
+            router.replace('/home')
+        } catch (error) {
+            Alert.alert('Error', error.message)
+        }
+        finally {
+            setIsSubmitting(false);
+        }
+    }
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
