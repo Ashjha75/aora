@@ -27,7 +27,10 @@ const TrendingItem = ({ activeItem, item }) => {
             {
                 // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
                 play ? (<Video
-                    source={{ uri: item.video }}
+                    // source={{ uri: item.video }}
+                    source={{
+                        uri: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                    }}
                     className="w-52 h-72 rounded-[35px] mt-3 bg-white/10"
                     resizeMode={ResizeMode.CONTAIN}
                     useNativeControls

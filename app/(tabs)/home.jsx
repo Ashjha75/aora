@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, Text, View, Image, RefreshControl, Alert } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants';
 import SearchInput from '../../components/SearchInput';
@@ -8,8 +8,10 @@ import EmptyState from '../../components/EmptyState';
 import { getLatestPosts, getNewPosts } from '../../lib/appwrite';
 import appWriteFetch from '../../lib/appwriteFetch';
 import VideoCard from '../../components/videoCard';
+import { useGlobalContext } from '../../context/GlobalProvider';
 const Home = () => {
     const { data: posts, refetchData } = appWriteFetch(getNewPosts)
+    const { user } = useGlobalContext();
     const { data: latestPosts } = appWriteFetch(getLatestPosts)
 
     const [refreshing, setRefreshing] = useState(false);
@@ -34,7 +36,7 @@ const Home = () => {
                         <View className="justify-between items-start flex-row mb-6">
                             <View>
                                 <Text className="font-pmedium text-sm text-gray-100">Welcome Back </Text>
-                                <Text className="text-2xl font-psemibold text-white">Ashish</Text>
+                                <Text className="text-2xl font-psemibold text-white">{user?.username}</Text>
                             </View>
                             <View className="mt-1.5">
                                 <Image source={images.logoSmall}

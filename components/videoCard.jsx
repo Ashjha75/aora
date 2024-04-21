@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import icons from '../constants/icons'
+import { ResizeMode, Video } from 'expo-av';
 const VideoCard = ({ video: { title, thumbnail, video, users: { username, avatar } } }) => {
     const [play, setPlay] = useState(false);
     return (
@@ -17,8 +18,28 @@ const VideoCard = ({ video: { title, thumbnail, video, users: { username, avatar
                     <Image source={icons.menu} className="w-5 h-5" resizeMode='contain' />
                 </View></View>
 
-            {play ? (<Text className="text-white">Playing</Text>) : (
-                <TouchableOpacity className="w-full h-64 rounded-xl mt-3 relative justify-center items-center" activeOpacity={0.7} onPress={() => setPlay(true)}>
+            {play ? (
+                // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                <Video
+                    // source={{ uri: video }}
+                    source={{
+                        uri: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                    }}
+                    className="w-full h-60 rounded-xl mt-3 "
+                    resizeMode={ResizeMode.CONTAIN}
+                    useNativeControls
+                    shouldPlay
+                    onPlaybackStatusUpdate={(status) => {
+                        if (status.didJustFinish) {
+                            setPlay(false)
+                        }
+                    }}
+                    onError={(e) => {
+                        console.log('Error loading video', e);
+                        Alert.alert('Error loading video', e);
+                    }}
+                />) : (
+                <TouchableOpacity className="w-full h-60 rounded-xl mt-3 relative justify-center items-center" activeOpacity={0.7} onPress={() => setPlay(true)}>
                     <Image source={{ uri: thumbnail }} className="w-full h-60 mt-3 rounded-xl" resizeMode='cover' />
                     <Image source={icons.play} className="w-12 h-12 absolute" resizeMode='contain' />
                 </TouchableOpacity>
